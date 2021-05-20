@@ -9,7 +9,7 @@
       <directory suffix="TestBase.php">./src</directory>
     </exclude>
     <report>
-      <clover outputFile="clover.xml"/>
+      <clover outputFile="/github/workspace/clover.xml"/>
     </report>
   </coverage>
   <testsuites>
