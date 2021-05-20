@@ -33,13 +33,7 @@ jobs:
     # Docs: https://getcomposer.org/doc/articles/scripts.md
 
     - name: PHPUnit (php-actions)
-      # You may pin to the exact commit or the version.
-      # uses: php-actions/phpunit@a182eaa14350a89671a73588ac5f2d11e3e5ee81
-      uses: php-actions/phpunit@v2
-      with:
-        configuration: phpunit.xml
-        # JUnit output file location
-        args: -vvv
+      run: vendor/bin/phpunit --configuration phpunit.xml
 
     - name: phpunit-coverage-badge
     # You may pin to the exact commit or the version.
