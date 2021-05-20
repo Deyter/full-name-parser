@@ -39,7 +39,7 @@ jobs:
       with:
         configuration: phpunit.xml
         # JUnit output file location
-        args: vvv
+        args: -vvv
 
     - name: phpunit-coverage-badge
     # You may pin to the exact commit or the version.
