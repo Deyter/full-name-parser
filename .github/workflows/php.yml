@@ -40,5 +40,5 @@ jobs:
     # uses: timkrase/phpunit-coverage-badge@29e63a46fd2b558fadefaa1699c6aa5892bd5791
       uses: timkrase/phpunit-coverage-badge@v1.2.0
       with:
-        report: 'coverage.xml'
+        report: 'clover.xml'
         coverage_badge_path: 'plugin/badge.svg'
