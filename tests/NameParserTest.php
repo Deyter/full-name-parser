@@ -2,6 +2,13 @@
 
 namespace ADCI\FullNameParser\Test;
 
+use ADCI\FullNameParser\Exception\FirstNameNotFoundException;
+use ADCI\FullNameParser\Exception\FlipStringException;
+use ADCI\FullNameParser\Exception\IncorrectInputException;
+use ADCI\FullNameParser\Exception\LastNameNotFoundException;
+use ADCI\FullNameParser\Exception\ManyMiddleNamesException;
+use ADCI\FullNameParser\Exception\MultipleMatchesException;
+use ADCI\FullNameParser\Exception\NameParsingException;
 use ADCI\FullNameParser\Name;
 use ADCI\FullNameParser\Parser;
 use PHPUnit\Framework\TestCase;
@@ -10,7 +17,7 @@ use PHPUnit_Framework_Error_Warning;
 /**
  * Test case based on https://github.com/dschnelldavis/parse-full-name .
  *
- * @coversDefaultClass \ADCI\FullNameParser\Parser
+ * @coversDefaultClass Parser
  * @group bibcite
  */
 class NameParserTest extends TestCase
@@ -19,7 +26,7 @@ class NameParserTest extends TestCase
     /**
      * Parser variable.
      *
-     * @var \ADCI\FullNameParser\Parser
+     * @var Parser
      */
     private $parser;
 
@@ -321,7 +328,7 @@ class NameParserTest extends TestCase
         ],
     ];
 
-    // List from https://github.com/mklaber/node-another-name-parser
+    /** List from @see https://github.com/mklaber/node-another-name-parser */
     // Except not valid strings.
     const ADDITIONAL_NAMES = [
         [
@@ -624,7 +631,7 @@ class NameParserTest extends TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->parser = new Parser();
@@ -633,7 +640,8 @@ class NameParserTest extends TestCase
     /**
      * Test FullNameParser parse.
      *
-     * @throws \ADCI\FullNameParser\Exception\NameParsingException
+     * @throws NameParsingException
+     * @medium
      * @coversDefaultClass
      */
     public function testAdditionalNameList()
@@ -664,7 +672,8 @@ class NameParserTest extends TestCase
     /**
      * Test FullNameParser parse.
      *
-     * @throws \ADCI\FullNameParser\Exception\NameParsingException
+     * @throws NameParsingException
+     * @medium
      * @coversDefaultClass
      */
     public function testNameList()
@@ -697,19 +706,21 @@ class NameParserTest extends TestCase
     /**
      * Test throw error by default.
      *
-     * @expectedException \ADCI\FullNameParser\Exception\IncorrectInputException
-     * @throws \ADCI\FullNameParser\Exception\NameParsingException
+     * @throws NameParsingException
+     * @small
      * @covers \ADCI\FullNameParser\Exception\IncorrectInputException
      */
     public function testThrows()
     {
+        $this->expectException(IncorrectInputException::class);
         $this->parser->parse(null);
     }
 
     /**
      * Test not throw error by set options.
      *
-     * @throws \ADCI\FullNameParser\Exception\NameParsingException
+     * @throws NameParsingException
+     * @small
      * @coversNothing
      */
     public function testDoesNotThrow()
@@ -725,7 +736,8 @@ class NameParserTest extends TestCase
     /**
      * Test fix case parse.
      *
-     * @throws \ADCI\FullNameParser\Exception\NameParsingException
+     * @throws NameParsingException
+     * @medium
      * @coversDefaultClass
      */
     public function testCaseNameList()
@@ -764,7 +776,8 @@ class NameParserTest extends TestCase
     /**
      * Test part of names parse.
      *
-     * @throws \ADCI\FullNameParser\Exception\NameParsingException
+     * @throws NameParsingException
+     * @small
      * @coversDefaultClass
      */
     public function testPartNameList()
@@ -804,7 +817,8 @@ class NameParserTest extends TestCase
      * Not any assertion because not so easy to assert warning.
      * Simple coverage.
      *
-     * @throws \ADCI\FullNameParser\Exception\NameParsingException
+     * @throws NameParsingException
+     * @small
      * @coversDefaultClass
      */
     public function testManyMiddleNames()
@@ -819,17 +833,16 @@ class NameParserTest extends TestCase
             'suffix' => '',
             'errors' => ['Warning: 19 middle names'],
         ];
-        try {
-            $this->parser->parse($name['original']);
-        } catch (PHPUnit_Framework_Error_Warning $ex) {
-        }
+        $this->expectWarning();
+        $this->parser->parse($name['original']);
     }
 
     /**
      * Not any assertion because not so easy to assert warning.
      * Simple coverage.
      *
-     * @throws \ADCI\FullNameParser\Exception\NameParsingException
+     * @throws NameParsingException
+     * @small
      * @covers \ADCI\FullNameParser\Exception\ManyMiddleNamesException
      */
     public function testManyMiddleNamesEx()
@@ -844,71 +857,74 @@ class NameParserTest extends TestCase
             'suffix' => '',
             'errors' => ['Warning: 19 middle names'],
         ];
-        try {
-            $this->parser->parse($name['original']);
-        } catch (PHPUnit_Framework_Error_Warning $ex) {
-        }
+        $this->expectWarning();
+        $this->parser->parse($name['original']);
     }
 
     /**
      * Additional test for exception.
      *
-     * @expectedException \ADCI\FullNameParser\Exception\IncorrectInputException
-     * @throws \ADCI\FullNameParser\Exception\NameParsingException
+     * @throws NameParsingException
+     * @small
      * @coversDefaultClass
      */
     public function testThrowsEx()
     {
+        $this->expectException(IncorrectInputException::class);
         $this->parser->parse(null);
     }
 
     /**
-     * @expectedException \ADCI\FullNameParser\Exception\LastNameNotFoundException
-     * @throws \ADCI\FullNameParser\Exception\NameParsingException
+     * @throws NameParsingException
+     * @small
      * @coversDefaultClass
      */
     public function testNoLastNameDefaultException()
     {
         $name = 'Edward';
+        $this->expectException(LastNameNotFoundException::class);
         $this->parser->parse($name);
     }
 
     /**
      * Additional test for exception.
      *
-     * @expectedException \ADCI\FullNameParser\Exception\FirstNameNotFoundException
-     * @throws \ADCI\FullNameParser\Exception\NameParsingException
+     * @throws NameParsingException
+     * @small
      * @coversDefaultClass
      */
     public function testNoFirstNameDefaultException()
     {
         $name = 'Mr. Hyde';
+        $this->expectException(FirstNameNotFoundException::class);
         $this->parser->parse($name);
     }
 
     /**
      * Exception test.
      *
-     * @expectedException \ADCI\FullNameParser\Exception\FlipStringException
-     * @throws \ADCI\FullNameParser\Exception\NameParsingException
+     * @throws NameParsingException
+     * @small
      * @coversDefaultClass
      */
     public function testFlipStringException()
     {
         $name = 'Jüan, Martinez, de Lorenzo y Gutierez';
+        $this->expectException(FlipStringException::class);
         $this->parser->parse($name);
     }
 
     /**
      * Exception test.
      *
-     * @expectedException \ADCI\FullNameParser\Exception\MultipleMatchesException
-     * @throws \ADCI\FullNameParser\Exception\NameParsingException
+     * @throws NameParsingException
+     * @small
      * @coversDefaultClass
      */
     public function testMultipleMatchesException()
     {
         $name = 'Jüan Martinez, Jr de Lorenzo y Gutierez, Jr';
+        $this->expectException(MultipleMatchesException::class);
         $this->parser->parse($name);
     }
 }

@@ -2,13 +2,16 @@
 
 namespace ADCI\FullNameParser\Test;
 
+use ADCI\FullNameParser\Exception\FirstNameNotFoundException;
+use ADCI\FullNameParser\Exception\LastNameNotFoundException;
+use ADCI\FullNameParser\Exception\NameParsingException;
 use ADCI\FullNameParser\Parser;
 use PHPUnit\Framework\TestCase;
 
 /**
  * Test case based on https://github.com/davidgorges/HumanNameParser.php .
  *
- * @coversDefaultClass \ADCI\FullNameParser\Parser
+ * @coversDefaultClass Parser
  * @group FullNameParser
  */
 class NameTest extends TestCase
@@ -24,14 +27,14 @@ class NameTest extends TestCase
     /**
      * Parser variable.
      *
-     * @var \ADCI\FullNameParser\Parser
+     * @var Parser
      */
     private $parser;
 
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->parser = new Parser();
@@ -40,7 +43,8 @@ class NameTest extends TestCase
     /**
      * Simple test on suffix parsing.
      *
-     * @throws \ADCI\FullNameParser\Exception\NameParsingException
+     * @throws NameParsingException
+     * @small
      * @coversDefaultClass
      */
     public function testSuffix()
@@ -55,7 +59,8 @@ class NameTest extends TestCase
     /**
      * Simple parsing test.
      *
-     * @throws \ADCI\FullNameParser\Exception\NameParsingException
+     * @throws NameParsingException
+     * @small
      * @coversDefaultClass
      */
     public function testSimple()
@@ -69,7 +74,8 @@ class NameTest extends TestCase
     /**
      * Simple parsing test with comma.
      *
-     * @throws \ADCI\FullNameParser\Exception\NameParsingException
+     * @throws NameParsingException
+     * @small
      * @coversDefaultClass
      */
     public function testReverse()
@@ -83,7 +89,8 @@ class NameTest extends TestCase
     /**
      * Simple parsing test with comma and title.
      *
-     * @throws \ADCI\FullNameParser\Exception\NameParsingException
+     * @throws NameParsingException
+     * @small
      * @coversDefaultClass
      */
     public function testReverseWithAcademicTitle()
@@ -98,7 +105,8 @@ class NameTest extends TestCase
     /**
      * Simple parsing test with title.
      *
-     * @throws \ADCI\FullNameParser\Exception\NameParsingException
+     * @throws NameParsingException
+     * @small
      * @coversDefaultClass
      */
     public function testAcademicTitle()
@@ -113,7 +121,8 @@ class NameTest extends TestCase
     /**
      * Simple parsing test with prefix.
      *
-     * @throws \ADCI\FullNameParser\Exception\NameParsingException
+     * @throws NameParsingException
+     * @small
      * @coversDefaultClass
      */
     public function testLastNameWithPrefix()
@@ -127,33 +136,36 @@ class NameTest extends TestCase
     /**
      * Exception test.
      *
-     * @expectedException \ADCI\FullNameParser\Exception\FirstNameNotFoundException
-     * @throws \ADCI\FullNameParser\Exception\NameParsingException
+     * @throws NameParsingException
+     * @small
      * @covers \ADCI\FullNameParser\Exception\FirstNameNotFoundException
      */
     public function testNoFirstNameDefaultException()
     {
         $name = 'Mr. Hyde';
+        $this->expectException(FirstNameNotFoundException::class);
         $this->parser->parse($name);
     }
 
     /**
      * Exception test.
      *
-     * @expectedException \ADCI\FullNameParser\Exception\LastNameNotFoundException
-     * @throws \ADCI\FullNameParser\Exception\NameParsingException
+     * @throws NameParsingException
+     * @small
      * @covers \ADCI\FullNameParser\Exception\LastNameNotFoundException
      */
     public function testNoLastNameDefaultException()
     {
         $name = 'Edward';
+        $this->expectException(LastNameNotFoundException::class);
         $this->parser->parse($name);
     }
 
     /**
      * Simple last name parsing test.
      *
-     * @throws \ADCI\FullNameParser\Exception\NameParsingException
+     * @throws NameParsingException
+     * @small
      * @coversDefaultClass
      */
     public function testFirstNameNotMandatory()
@@ -168,7 +180,8 @@ class NameTest extends TestCase
     /**
      * Simple first name parsing test.
      *
-     * @throws \ADCI\FullNameParser\Exception\NameParsingException
+     * @throws NameParsingException
+     * @small
      * @coversDefaultClass
      */
     public function testLastNameNotMandatory()
@@ -180,53 +193,40 @@ class NameTest extends TestCase
     }
 
     /**
-     * Simple middle name parsing test.
-     *
-     * @throws \ADCI\FullNameParser\Exception\NameParsingException
-     * @coversDefaultClass
-     */
-    public function testMiddleNameNotMandatory()
-    {
-        $name = 'Dr. Hans Meiser';
-        $this->parser = new Parser(['mandatory_middle_name' => false]);
-        $nameObject = $this->parser->parse($name);
-        $this->assertEquals('Dr.', $nameObject->getAcademicTitle());
-        $this->assertEquals('Meiser', $nameObject->getLastName());
-        $this->assertEquals('Hans', $nameObject->getFirstName());
-    }
-
-    /**
      * Exception test.
      *
-     * @expectedException \ADCI\FullNameParser\Exception\FirstNameNotFoundException
-     * @throws \ADCI\FullNameParser\Exception\NameParsingException
+     * @throws NameParsingException
+     * @small
      * @covers \ADCI\FullNameParser\Exception\FirstNameNotFoundException
      */
     public function testFirstNameMandatory()
     {
         $this->parser = new Parser(['mandatory_first_name' => true]);
         $name = 'Mr. Hyde';
+        $this->expectException(FirstNameNotFoundException::class);
         $this->parser->parse($name);
     }
 
     /**
      * Exception test.
      *
-     * @expectedException \ADCI\FullNameParser\Exception\LastNameNotFoundException
-     * @throws \ADCI\FullNameParser\Exception\NameParsingException
+     * @throws NameParsingException
+     * @small
      * @covers \ADCI\FullNameParser\Exception\LastNameNotFoundException
      */
     public function testLastNameMandatory()
     {
         $this->parser = new Parser(['mandatory_last_name' => true]);
         $name = 'Edward';
+        $this->expectException(LastNameNotFoundException::class);
         $this->parser->parse($name);
     }
 
     /**
      * Complex name parsing test.
      *
-     * @throws \ADCI\FullNameParser\Exception\NameParsingException
+     * @throws NameParsingException
+     * @medium
      * @coversDefaultClass
      */
     public function testNameList()
